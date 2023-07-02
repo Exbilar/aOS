@@ -1,16 +1,6 @@
 
 #include "include/vga.h"
 
-static const size_t VGA_WIDTH = 80;
-static const size_t VGA_HEIGHT = 25;
-
-static uint16_t* const VGA_MEMORY = (uint16_t*) 0xB8000;
-
-static size_t terminal_row;
-static size_t terminal_column;
-static uint8_t terminal_color;
-static uint16_t* terminal_buffer;
-
 void terminal_init(void) {
     terminal_row = 0;
     terminal_column = 0;
@@ -39,7 +29,11 @@ void terminal_putchar(char c) {
     if (++terminal_column == VGA_WIDTH) {
         terminal_column = 0;
         if (++terminal_row == VGA_HEIGHT) {
-            terminal_row = 0;
+            for (size_t line = 1; line < VGA_HEIGHT; line++) {
+                terminal_scroll(line);
+            }
+            terminal_delete_last_line();
+            terminal_row = VGA_HEIGHT - 1;
         }
     }
 }
@@ -48,5 +42,30 @@ void terminal_write(const char* ch) {
     size_t len = strlen(ch);
     for (size_t i = 0; i < len; i++) {
         terminal_putchar(ch[i]);
+    }
+}
+
+void terminal_scroll(size_t line) {
+    uint16_t* ptr;
+
+    if (line == 0) {
+        for (size_t x = 0; x < VGA_WIDTH; x++) {
+            ptr = VGA_MEMORY + x * 2;
+            *ptr = 0;
+        }
+        return;
+    }
+
+    for (size_t x = 0; x < VGA_WIDTH; x++) {
+        ptr = VGA_MEMORY + line * (VGA_WIDTH * 2) + x * 2;
+        *(ptr - VGA_WIDTH * 2) = *ptr;
+    }
+}
+
+void terminal_delete_last_line() {
+    uint16_t* ptr;
+    for (size_t x = 0; x < VGA_WIDTH; x++) {
+        ptr = VGA_MEMORY + (VGA_HEIGHT - 1) * (VGA_WIDTH * 2) + x * 2;
+        *ptr = 0;
     }
 }

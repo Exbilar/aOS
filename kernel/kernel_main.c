@@ -6,6 +6,6 @@
 
 void kernel_main() {
     terminal_init();
-    terminal_write("Hello World!");
+
     return ;
 }
