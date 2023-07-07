@@ -4,7 +4,7 @@ AS := x86_64-elf-as
 LD := x86_64-elf-ld
 
 # 定义编译选项和路径
-CFLAGS := -m32 -ffreestanding -std=gnu99 -Wall
+CFLAGS := -m32 -ffreestanding -std=gnu99
 BOOT_PATH := ./boot
 KERNEL_PATH := ./kernel
 
@@ -12,7 +12,11 @@ KERNEL_PATH := ./kernel
 OBJ_FILES := boot.o \
 			 kernel_main.o \
 			 string.o \
-			 vga.o
+			 vga.o \
+			 assert.o \
+			 stdio.o \
+			 kalloc.o \
+			 gdt.o
 
 OUTPUT := aOS.bin
 
@@ -36,8 +40,20 @@ string.o: $(KERNEL_PATH)/string.c
 vga.o: $(KERNEL_PATH)/vga.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/vga.c -o vga.o
 
+assert.o: $(KERNEL_PATH)/assert.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/assert.c -o assert.o
+
 kernel_main.o: $(KERNEL_PATH)/kernel_main.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/kernel_main.c -o kernel_main.o
+
+stdio.o: $(KERNEL_PATH)/stdio.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/stdio.c -o stdio.o
+
+kalloc.o: $(KERNEL_PATH)/kalloc.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/kalloc.c -o kalloc.o
+
+gdt.o: $(KERNEL_PATH)/gdt.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/gdt.c -o gdt.o
 
 # 定义伪目标
 .PHONY: clean run
