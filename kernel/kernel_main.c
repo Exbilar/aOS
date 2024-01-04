@@ -6,16 +6,12 @@
 #include "include/multiboot.h"
 #include "include/stdio.h"
 #include "include/gdt.h"
+#include "include/idt.h"
 
 void kernel_main(uint32_t magic, uint32_t addr) {
 
-    init_gdt();
-
     terminal_init();
-
-    if (magic == MULTIBOOT_BOOTLOADER_MAGIC) {
-        panic("hello world!");
-    }
-
-    return ;
+    init_gdt();
+    init_idt();
+    sti();
 }

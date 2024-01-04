@@ -3,8 +3,10 @@
 //
 
 #include "include/gdt.h"
+#include "include/vga.h"
 
 struct segdesc gdt[NSEGS];
+struct taskstate tss;
 
 uint64_t create_desc(uint32_t base, uint32_t limit, uint16_t flag) {
     uint64_t descriptor;
@@ -31,7 +33,7 @@ void set_gdt_entry(int index, uint64_t desc) {
 }
 
 void load_gdt(void) {
-    lgdt(gdt, NSEGS * sizeof(gdt));
+    lgdt(gdt, sizeof(gdt));
 }
 
 void init_gdt(void) {
@@ -51,4 +53,12 @@ void init_gdt(void) {
 
     desc = create_desc(0, 0x000FFFFF, (GDT_DATA_PL3));
     set_gdt_entry(4, desc);
+
+    desc = create_desc((uint32_t)&tss, (uint32_t)sizeof tss, (GDT_TSS_PL3));
+    set_gdt_entry(5, desc);
+
+    load_gdt();
+    ltr((ushort) ((NSEGS - 1) * sizeof(desc)));
+
+    terminal_write("gdt init done");
 }

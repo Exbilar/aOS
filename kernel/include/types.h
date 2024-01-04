@@ -5,6 +5,8 @@
 #ifndef AOS_TYPES_H
 #define AOS_TYPES_H
 
+#include <stdint.h>
+
 typedef unsigned int   uint;
 typedef unsigned short ushort;
 typedef unsigned char  uchar;

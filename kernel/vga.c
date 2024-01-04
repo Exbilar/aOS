@@ -43,6 +43,8 @@ void terminal_write(const char* ch) {
     for (size_t i = 0; i < len; i++) {
         terminal_putchar(ch[i]);
     }
+    terminal_row += 1;
+    terminal_column = 0;
 }
 
 void terminal_scroll(size_t line) {

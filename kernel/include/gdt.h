@@ -51,6 +51,10 @@
                      SEG_LONG(0)     | SEG_SIZE(1) | SEG_GRAN(1) | \
                      SEG_PRIV(3)     | SEG_DATA_RDWR
 
+#define GDT_TSS_PL3  SEG_DESCTYPE(0) | SEG_PRES(1) | SEG_SAVL(0) | \
+                     SEG_LONG(0)     | SEG_SIZE(0) | SEG_GRAN(0) | \
+                     SEG_PRIV(0)     | SEG_CODE_EXA
+
 uint64_t create_desc(uint32_t base, uint32_t limit, uint16_t flag);
 void set_gdt_entry(int index, uint64_t desc);
 void load_gdt(void);

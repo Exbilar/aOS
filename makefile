@@ -16,7 +16,8 @@ OBJ_FILES := boot.o \
 			 assert.o \
 			 stdio.o \
 			 kalloc.o \
-			 gdt.o
+			 gdt.o \
+			 idt.o
 
 OUTPUT := aOS.bin
 
@@ -54,6 +55,9 @@ kalloc.o: $(KERNEL_PATH)/kalloc.c
 
 gdt.o: $(KERNEL_PATH)/gdt.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/gdt.c -o gdt.o
+
+idt.o: $(KERNEL_PATH)/idt.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/idt.c -o idt.o
 
 # 定义伪目标
 .PHONY: clean run
