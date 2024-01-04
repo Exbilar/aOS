@@ -2,3 +2,5 @@ isodir
 *.bin
 *.o
 *.iso
+/.idea/aOS.iml
+/.idea/modules.xml
