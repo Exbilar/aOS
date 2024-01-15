@@ -7,11 +7,11 @@
 #include "include/stdio.h"
 #include "include/gdt.h"
 #include "include/idt.h"
+#include "include/irq.h"
 
 void kernel_main(uint32_t magic, uint32_t addr) {
-
     terminal_init();
     init_gdt();
-    init_idt();
-    sti();
+    init_intr();
+    for (;;);
 }

@@ -14,7 +14,7 @@
 uint32_t set_selector(uint rpl, uint ti, uint index);
 uint64_t create_idt_entry(uint32_t off, uint16_t sel, uint d);
 void set_idt_entry(uint64_t desc, uint index);
-void register_handler(void (*handler)(), uint vec);
+void register_handler(void *handler, uint vec);
 
 void load_idt();
 void init_idt();

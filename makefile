@@ -4,12 +4,13 @@ AS := x86_64-elf-as
 LD := x86_64-elf-ld
 
 # 定义编译选项和路径
-CFLAGS := -m32 -ffreestanding -std=gnu99
+CFLAGS := -m32 -ffreestanding -g -std=gnu99
 BOOT_PATH := ./boot
 KERNEL_PATH := ./kernel
 
 # 定义目标文件和输出文件
 OBJ_FILES := boot.o \
+			 intr.o \
 			 kernel_main.o \
 			 string.o \
 			 vga.o \
@@ -17,7 +18,8 @@ OBJ_FILES := boot.o \
 			 stdio.o \
 			 kalloc.o \
 			 gdt.o \
-			 idt.o
+			 idt.o \
+			 irq.o \
 
 OUTPUT := aOS.bin
 
@@ -34,6 +36,9 @@ $(OUTPUT): $(OBJ_FILES)
 
 boot.o: $(BOOT_PATH)/boot.S
 	$(CC) $(CFLAGS) -c $(BOOT_PATH)/boot.S -o boot.o
+
+intr.o: $(BOOT_PATH)/intr.S
+	$(CC) $(CFLAGS) -c $(BOOT_PATH)/intr.S -o intr.o
 
 string.o: $(KERNEL_PATH)/string.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/string.c -o string.o
@@ -59,6 +64,9 @@ gdt.o: $(KERNEL_PATH)/gdt.c
 idt.o: $(KERNEL_PATH)/idt.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/idt.c -o idt.o
 
+irq.o: $(KERNEL_PATH)/irq.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/irq.c -o irq.o
+
 # 定义伪目标
 .PHONY: clean run
 
@@ -67,3 +75,6 @@ clean:
 
 run: all
 	qemu-system-i386 -cdrom aOS.iso
+
+gdb: all
+	qemu-system-i386 -s -S -cdrom aOS.iso

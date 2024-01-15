@@ -4,3 +4,4 @@ isodir
 *.iso
 /.idea/aOS.iml
 /.idea/modules.xml
+/.idea/customTargets.xml

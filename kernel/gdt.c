@@ -36,6 +36,8 @@ void load_gdt(void) {
     lgdt(gdt, sizeof(gdt));
 }
 
+extern void gdt_flush();
+
 void init_gdt(void) {
     uint64_t desc;
 
@@ -58,6 +60,7 @@ void init_gdt(void) {
     set_gdt_entry(5, desc);
 
     load_gdt();
+    gdt_flush();
     ltr((ushort) ((NSEGS - 1) * sizeof(desc)));
 
     terminal_write("gdt init done");

@@ -1,26 +1,26 @@
-###############################################################
-# Configuration file for Bochs
-###############################################################
+# bochs configuration file
+# bochsrc.disk
 
-# how much memory the emulated machine will have
+# memory size: 32MB
 megs: 32
 
-# filename of ROM images
+# BIOS and VGA BIOS
 romimage: file=/usr/local/share/bochs/BIOS-bochs-latest
 vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
 
-# what disk images will be used 
-floppya: 1_44=freedos.img, status=inserted
-floppyb: 1_44=pm.img, status=inserted
+# boot from hard disk (rather than floppy disk)
+boot: disk
 
-# choose the boot disk.
-boot: a
+# log file
+log: bochs.out
 
-# where do we send log messages?
-log: bochsout.txt
-
-# disable the mouse
+# disable mouse, enable keyboard
 mouse: enabled=0
+keyboard_mapping: enable=1,
+map=/path/to/bochs/share/bochs/keymaps/x11-pc-us.map
 
-# enable key mapping, using US layout as default.
-keyboard:keymap=/usr/local/share/bochs/keymaps/sdl2-pc-us.map
+# hard disk setting
+ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
+
+# gdb part setting
+#gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0
