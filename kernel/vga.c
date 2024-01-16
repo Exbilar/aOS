@@ -43,8 +43,14 @@ void terminal_write(const char* ch) {
     for (size_t i = 0; i < len; i++) {
         terminal_putchar(ch[i]);
     }
-    terminal_row += 1;
     terminal_column = 0;
+    if (++terminal_row == VGA_HEIGHT) {
+        for (size_t line = 1; line < VGA_HEIGHT; line++) {
+            terminal_scroll(line);
+        }
+        terminal_delete_last_line();
+        terminal_row = VGA_HEIGHT - 1;
+    }
 }
 
 void terminal_scroll(size_t line) {
@@ -52,15 +58,15 @@ void terminal_scroll(size_t line) {
 
     if (line == 0) {
         for (size_t x = 0; x < VGA_WIDTH; x++) {
-            ptr = VGA_MEMORY + x * 2;
-            *ptr = 0;
+            size_t index = x;
+            terminal_buffer[index] = vga_entry(' ', terminal_color);
         }
         return;
     }
 
     for (size_t x = 0; x < VGA_WIDTH; x++) {
-        ptr = VGA_MEMORY + line * (VGA_WIDTH * 2) + x * 2;
-        *(ptr - VGA_WIDTH * 2) = *ptr;
+        size_t index = line * VGA_WIDTH + x;
+        terminal_buffer[index - VGA_WIDTH] = terminal_buffer[index];
     }
 }
 
