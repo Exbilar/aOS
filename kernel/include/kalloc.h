@@ -6,10 +6,19 @@
 #define AOS_KALLOC_H
 
 #include <stdint.h>
+#include "mmu.h"
+#include "stdio.h"
+#include "i386.h"
 
-void freerange(void *vstart, void *vend);
-void kinit(void *vstart, void *vend);
-void* kalloc(void);
-void kfree(char *v);
+#define NPAGES 1024 * 1024
+
+struct run {
+    struct run *next;
+};
+
+void freerange(void *pa_start, void *pa_end);
+void kinit(void *pa_start, void *pa_end);
+void* kalloc();
+void kfree(char *pa);
 
 #endif //AOS_KALLOC_H

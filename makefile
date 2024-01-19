@@ -20,6 +20,8 @@ OBJ_FILES := boot.o \
 			 gdt.o \
 			 idt.o \
 			 irq.o \
+			 timer.o \
+			 vm.o \
 
 OUTPUT := aOS.bin
 
@@ -67,6 +69,12 @@ idt.o: $(KERNEL_PATH)/idt.c
 irq.o: $(KERNEL_PATH)/irq.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/irq.c -o irq.o
 
+timer.o: $(KERNEL_PATH)/timer.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/timer.c -o timer.o
+
+vm.o: $(KERNEL_PATH)/vm.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/vm.c -o vm.o
+
 # 定义伪目标
 .PHONY: clean run
 
@@ -74,7 +82,7 @@ clean:
 	rm -f $(OBJ_FILES) $(OUTPUT)
 
 run: all
-	qemu-system-i386 -cdrom aOS.iso
+	qemu-system-i386 -m 128 -cdrom aOS.iso
 
 gdb: all
-	qemu-system-i386 -s -S -cdrom aOS.iso
+	qemu-system-i386 -m 128 -s -S -cdrom aOS.iso

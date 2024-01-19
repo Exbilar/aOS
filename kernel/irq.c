@@ -6,6 +6,7 @@
 #include "include/idt.h"
 #include "include/i386.h"
 #include "include/vga.h"
+#include "include/timer.h"
 
 const unsigned char *exception_messages[] = {
         "Division By Zero",
@@ -42,6 +43,20 @@ const unsigned char *exception_messages[] = {
         "Reserved"
 };
 
+void* handler_entry_list[16] = {
+        0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0
+};
+
+void irq_install(int irq, void (*handler) (struct regs *r)) {
+    handler_entry_list[irq] = handler;
+}
+
+void irq_uninstall(int irq) {
+    handler_entry_list[irq] = 0;
+}
+
 void irq_remap() {
     outb(PIC_M_CTRL, 0x11);
     outb(PIC_M_DATA, 0x20);
@@ -61,6 +76,7 @@ void irq_remap() {
 void init_intr() {
     init_idt();
     irq_remap();
+    timer_init();
     sti();
 }
 
@@ -68,19 +84,21 @@ extern void intr_exit();
 
 void irq_handler(struct regs *r) {
 
+    void (*handler) (struct regs *r);
+    handler = handler_entry_list[r->int_no];
+    if (handler) {
+        handler(r);
+    }
+
     if (r->int_no < 32) {
         terminal_write(exception_messages[r->int_no]);
         for (;;);
     }
 
+    // sending EOI signal to 8259A chip
     if (r->int_no >= 40) {
         outb(PIC_S_CTRL, 0x20);
     }
 
     outb(PIC_M_CTRL, 0x20);
-
-    if (r->int_no == 32) {
-        terminal_write("Timer Interrupt!");
-    }
-
 }

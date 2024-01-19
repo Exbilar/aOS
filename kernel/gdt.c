@@ -44,16 +44,16 @@ void init_gdt(void) {
     desc = create_desc(0, 0, 0);
     set_gdt_entry(0, desc);
 
-    desc = create_desc(0, 0x000FFFFF, (GDT_CODE_PL0));
+    desc = create_desc(0, 0xFFFFFFFF, (GDT_CODE_PL0));
     set_gdt_entry(1, desc);
 
-    desc = create_desc(0, 0x000FFFFF, (GDT_DATA_PL0));
+    desc = create_desc(0, 0xFFFFFFFF, (GDT_DATA_PL0));
     set_gdt_entry(2, desc);
 
-    desc = create_desc(0, 0x000FFFFF, (GDT_CODE_PL3));
+    desc = create_desc(0, 0xFFFFFFFF, (GDT_CODE_PL3));
     set_gdt_entry(3, desc);
 
-    desc = create_desc(0, 0x000FFFFF, (GDT_DATA_PL3));
+    desc = create_desc(0, 0xFFFFFFFF, (GDT_DATA_PL3));
     set_gdt_entry(4, desc);
 
     desc = create_desc((uint32_t)&tss, (uint32_t)sizeof tss, (GDT_TSS_PL3));

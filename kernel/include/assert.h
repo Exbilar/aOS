@@ -10,5 +10,6 @@
 #include "vga.h"
 
 void assert(bool expr);
+void assert_write(bool expr, char *ch);
 
 #endif //AOS_ASSERT_H

@@ -6,6 +6,14 @@
 
 void assert(bool expr) {
     if (expr == false) {
+        asm volatile("cli");
         asm volatile("hlt");
+    }
+}
+
+void assert_write(bool expr, char *ch) {
+    if (expr == false) {
+        assert(false);
+        terminal_write(ch);
     }
 }

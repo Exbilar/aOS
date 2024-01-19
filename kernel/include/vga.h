@@ -2,7 +2,6 @@
 #define _KERNEL_VGA_H
 
 #include <stdint.h>
-
 #include "string.h"
 
 enum vga_color {

@@ -69,6 +69,8 @@ struct regs {
 
 void irq_remap();
 void init_intr();
+void irq_uninstall(int irq);
+void irq_install(int irq, void (*handler)(struct regs *r));
 void irq_handler(struct regs *r);
 
 #endif //AOS_IRQ_H
