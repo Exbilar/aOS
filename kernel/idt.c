@@ -86,5 +86,5 @@ void init_idt() {
     register_handler(irq_47, 47);
 
     load_idt();
-    terminal_write("idt init done");
+    terminal_writeln("idt init done");
 }

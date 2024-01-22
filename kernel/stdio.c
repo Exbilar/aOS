@@ -9,7 +9,7 @@
 #include <stdarg.h>
 
 void panic(char* ch) {
-    terminal_write(ch);
+    terminal_writeln(ch);
     assert(false);
 }
 

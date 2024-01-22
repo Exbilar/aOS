@@ -20,6 +20,14 @@ int memcmp(const void* aptr, const void* bptr, size_t size) {
     return 0;
 }
 
+void strcpy(void *src, void *dst, size_t size) {
+    unsigned char *src_ptr = (unsigned char *)src;
+    unsigned char *dst_ptr = (unsigned char *)dst;
+    for (size_t i = 0; i < size; i++) {
+        *dst_ptr++ = *src_ptr++;
+    }
+}
+
 void* memset(void* bufptr, int value, size_t size) {
     unsigned char* buf = (unsigned char*) bufptr;
     for (size_t i = 0; i < size; i++)

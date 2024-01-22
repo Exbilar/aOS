@@ -63,5 +63,5 @@ void init_gdt(void) {
     gdt_flush();
     ltr((ushort) ((NSEGS - 1) * sizeof(desc)));
 
-    terminal_write("gdt init done");
+    terminal_writeln("gdt init done");
 }

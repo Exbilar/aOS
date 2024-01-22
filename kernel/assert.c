@@ -14,6 +14,6 @@ void assert(bool expr) {
 void assert_write(bool expr, char *ch) {
     if (expr == false) {
         assert(false);
-        terminal_write(ch);
+        terminal_writeln(ch);
     }
 }

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "string.h"
+#include "i386.h"
 
 enum vga_color {
 	VGA_COLOR_BLACK = 0,
@@ -45,8 +46,11 @@ void terminal_setcolor(uint8_t color);
 void terminal_put_entry_at(unsigned char uc, uint8_t color, size_t x, size_t y);
 void terminal_putchar(char c);
 void terminal_write(const char* ch);
+void terminal_writeln(const char* ch);
 void terminal_init(void);
 void terminal_delete_last_line();
 void terminal_scroll(size_t line);
+void terminal_clear();
+void terminal_backspace();
 
 #endif

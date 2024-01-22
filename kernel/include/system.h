@@ -17,6 +17,9 @@
 #include "irq.h"
 #include "kalloc.h"
 #include "vm.h"
+#include "timer.h"
+#include "thread.h"
+#include "kbd.h"
 
 void mem_init(uint32_t addr) {
     multiboot_info_t* mbi = (multiboot_info_t*) addr;
@@ -26,6 +29,16 @@ void mem_init(uint32_t addr) {
     uint32_t pa_end = 0x100000 + mbi->mem_upper * 1024;
     kinit((void *)pa_start, (void *)pa_end);
     pagetable_init();
+}
+
+void init_all(uint32_t addr) {
+    terminal_init();
+    init_gdt();
+    init_intr();
+    mem_init(addr);
+    enable_thread();
+    timer_init();
+    kbd_init();
 }
 
 #endif //AOS_SYSTEM_H

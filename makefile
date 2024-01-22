@@ -22,6 +22,10 @@ OBJ_FILES := boot.o \
 			 irq.o \
 			 timer.o \
 			 vm.o \
+			 thread.o \
+			 list.o \
+			 lock.o \
+			 kbd.o \
 
 OUTPUT := aOS.bin
 
@@ -74,6 +78,18 @@ timer.o: $(KERNEL_PATH)/timer.c
 
 vm.o: $(KERNEL_PATH)/vm.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/vm.c -o vm.o
+
+thread.o: $(KERNEL_PATH)/thread.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/thread.c -o thread.o
+
+list.o:  $(KERNEL_PATH)/list.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/list.c -o list.o
+
+lock.o: $(KERNEL_PATH)/lock.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/lock.c -o lock.o
+
+kbd.o: $(KERNEL_PATH)/kbd.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/kbd.c -o kbd.o
 
 # 定义伪目标
 .PHONY: clean run

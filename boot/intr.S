@@ -118,3 +118,23 @@ VECTOR 44, ZERO
 VECTOR 45, ZERO
 VECTOR 46, ZERO
 VECTOR 47, ZERO
+
+.section .text
+.global switch_to
+
+switch_to:
+    pushl %esi
+    pushl %edi
+    pushl %ebx
+    pushl %ebp
+    /********** general protect for callee function *******/
+    movl 20(%esp), %eax
+    movl %esp, (%eax)                  // *(pthread->thread_stack) <- esp
+    /******* protect thread stack environment *******/
+    movl 24(%esp), %eax
+    movl (%eax), %esp
+    popl %ebp
+    popl %ebx
+    popl %edi
+    popl %esi
+    ret

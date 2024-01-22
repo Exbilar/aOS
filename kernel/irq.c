@@ -43,11 +43,7 @@ const unsigned char *exception_messages[] = {
         "Reserved"
 };
 
-void* handler_entry_list[16] = {
-        0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0
-};
+void* handler_entry_list[49] = {0};
 
 void irq_install(int irq, void (*handler) (struct regs *r)) {
     handler_entry_list[irq] = handler;
@@ -69,20 +65,27 @@ void irq_remap() {
     outb(PIC_S_DATA, 0x01);
 
     // open timer interrupt only
-    outb(PIC_M_DATA, 0xfe);
+    outb(PIC_M_DATA, 0xfc);
     outb(PIC_S_DATA, 0xff);
 }
 
 void init_intr() {
     init_idt();
     irq_remap();
-    timer_init();
     sti();
 }
 
 extern void intr_exit();
 
 void irq_handler(struct regs *r) {
+
+    // sending EOI signal to 8259A chip
+    if (r->int_no >= 32) {
+        outb(PIC_M_CTRL, 0x20);
+    }
+    if (r->int_no >= 40) {
+        outb(PIC_S_CTRL, 0x20);
+    }
 
     void (*handler) (struct regs *r);
     handler = handler_entry_list[r->int_no];
@@ -95,10 +98,4 @@ void irq_handler(struct regs *r) {
         for (;;);
     }
 
-    // sending EOI signal to 8259A chip
-    if (r->int_no >= 40) {
-        outb(PIC_S_CTRL, 0x20);
-    }
-
-    outb(PIC_M_CTRL, 0x20);
 }
