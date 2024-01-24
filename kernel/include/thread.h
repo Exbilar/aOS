@@ -11,6 +11,7 @@
 #include "i386.h"
 #include "string.h"
 #include "list.h"
+#include "lock.h"
 
 typedef void thread_func(void *);
 
@@ -41,6 +42,7 @@ struct thread_state{
     uint8_t ticks;
     uint32_t elapsed_ticks;
     ele_t general_tag;
+    ele_t blcok_tag;
     ele_t all_list_tag;
     uint32_t* pgdir;
     char name[16];
@@ -55,5 +57,10 @@ void kernel_thread(thread_func* func, void *args);
 thread_t* start_thread(char *name, int prio, thread_func func, void *args);
 void schedule();
 void enable_thread();
+
+void acquiresleep(sleeplock_t *lk);
+void releasesleep(sleeplock_t *lk);
+void sleep(sleeplock_t *lk, enum task_status status);
+void wakeup(sleeplock_t *lk);
 
 #endif //AOS_THREAD_H

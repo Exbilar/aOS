@@ -8,7 +8,7 @@
 #include "i386.h"
 #include "types.h"
 #include "string.h"
-#include "thread.h"
+#include "list.h"
 
 struct spinlock {
     uint locked;
@@ -18,9 +18,10 @@ struct spinlock {
 struct sleeplock {
     uint locked;
     struct spinlock lock;
-    thread_t *pthread;
+    list_t chain;
     char name[16];
 };
+typedef struct sleeplock sleeplock_t;
 
 void init_lock(struct spinlock *lk, char *name);
 void acquire(struct spinlock *lk);

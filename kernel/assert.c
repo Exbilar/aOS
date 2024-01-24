@@ -13,7 +13,7 @@ void assert(bool expr) {
 
 void assert_write(bool expr, char *ch) {
     if (expr == false) {
-        assert(false);
         terminal_writeln(ch);
+        assert(false);
     }
 }

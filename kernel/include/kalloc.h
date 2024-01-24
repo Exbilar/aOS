@@ -9,6 +9,7 @@
 #include "mmu.h"
 #include "stdio.h"
 #include "i386.h"
+#include "lock.h"
 
 #define NPAGES 1024 * 1024
 

@@ -52,6 +52,7 @@ irq_\no:
     movl %esp, %eax
     pushl %eax
     movl $irq_handler, %eax
+    sti
     call *%eax
     jmp intr_exit
 
@@ -68,7 +69,7 @@ intr_exit:
     pop %ds
     popa
     add $8, %esp
-    iretl
+    iret
 
 VECTOR 0, ZERO
 VECTOR 1, ZERO

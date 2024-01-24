@@ -7,16 +7,18 @@
 
 struct {
     uint32_t mem_start;
+    struct spinlock lock;
     struct run *freelist;
 }vmem;
 
 void vinit() {
     vmem.mem_start = 0x300000;
     vmem.freelist = NULL;
+    init_lock(&vmem.lock, "vmem");
 }
 
 void* valloc() {
-    cli();
+    acquire(&vmem.lock);
     if (vmem.freelist  != NULL) {
         struct run *r = vmem.freelist;
         vmem.freelist = r->next;
@@ -25,18 +27,18 @@ void* valloc() {
     }
     uint32_t res = vmem.mem_start;
     vmem.mem_start += PGSIZE;
-    sti();
+    release(&vmem.lock);
     return (void *)res;
 }
 
 void vfree(char *va) {
     va = (char *) PGROUNDDOWN((uint32_t)va);
     assert_write((uint32_t) va < vmem.mem_start, "panic: vfree");
-    cli();
+    acquire(&vmem.lock);
     struct run *r = (struct run *)va;
     r->next = vmem.freelist;
     vmem.freelist = r;
-    sti();
+    release(&vmem.lock);
 }
 
 void free_page(char *pa) {

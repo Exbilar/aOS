@@ -1,5 +1,8 @@
 
 #include "include/vga.h"
+#include "include/lock.h"
+
+struct spinlock console_lock;
 
 static void update_cursor(size_t x, size_t y) {
     uint16_t pos = y * VGA_WIDTH + x;
@@ -21,6 +24,7 @@ void terminal_init(void) {
             terminal_buffer[index] = vga_entry(' ', terminal_color);
         }
     }
+    init_lock(&console_lock, "console lock");
 }
 
 void terminal_setcolor(uint8_t color) {
@@ -33,7 +37,6 @@ void terminal_put_entry_at(unsigned char uc, uint8_t color, size_t x, size_t y) 
 }
 
 void terminal_putchar(char c) {
-    //asm volatile("cli");
     c = (unsigned char) c;
       terminal_put_entry_at(c, terminal_color, terminal_column, terminal_row);
     if (++terminal_column == VGA_WIDTH) {
@@ -47,7 +50,6 @@ void terminal_putchar(char c) {
         }
     }
     update_cursor(terminal_column, terminal_row);
-    //asm volatile("sti");
 }
 
 void terminal_clear() {

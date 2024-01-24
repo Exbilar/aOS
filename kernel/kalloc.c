@@ -7,6 +7,7 @@
 struct {
     uint32_t mem_low;
     uint32_t mem_high;
+    struct spinlock lock;
     struct run *freelist;
 }kmem;
 
@@ -14,6 +15,7 @@ void kinit(void *pa_start, void *pa_end) {
     kmem.mem_low = (uint32_t) pa_start;
     kmem.mem_high = (uint32_t) pa_end;
     kmem.freelist = NULL;
+    init_lock(&kmem.lock, "kmem");
     freerange(pa_start, pa_end);
 }
 
@@ -25,12 +27,12 @@ void freerange(void *pa_start, void *pa_end) {
 }
 
 void* kalloc() {
-    cli();
+    acquire(&kmem.lock);
     struct run* r = kmem.freelist;
     if (r) {
         kmem.freelist = kmem.freelist->next;
     }
-    sti();
+    release(&kmem.lock);
     if (r) {
         memset((char *)r, 0, PGSIZE);
     }
@@ -43,8 +45,8 @@ void kfree(char *pa) {
         panic("kfree");
 
     struct run *r = (struct run*) p;
-    cli();
+    acquire(&kmem.lock);
     r->next = kmem.freelist;
     kmem.freelist = r;
-    sti();
+    release(&kmem.lock);
 }

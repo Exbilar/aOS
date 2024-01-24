@@ -6,6 +6,7 @@
 #include "include/vga.h"
 #include "include/thread.h"
 #include "include/stdio.h"
+#include "include/i386.h"
 
 int timer_ticks = 0;
 int timer_hz = 100;
@@ -42,6 +43,8 @@ void timer_handler(struct regs *r) {
 }
 
 void timer_wait(int ticks) {
+    uint eflags = readeflags();
+    assert_write(eflags & 0x00000200, "panic timer_wait: IF not set");
     uint32_t end_ticks = ticks + timer_ticks;
     while (timer_ticks < end_ticks);
 }
