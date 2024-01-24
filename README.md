@@ -14,6 +14,7 @@ make run           #compile and run
 make clean         #clean all .o files
 make gdb           #debug
 ```
+![qemu.gif](docs%2Fqemu.gif)
 
 ### ToDo List:
   - [x] kernel thread support

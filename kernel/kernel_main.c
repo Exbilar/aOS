@@ -4,10 +4,7 @@ struct sleeplock lk;
 
 void k_thread_a(void *args) {
     char *str = args;
-    acquiresleep(&lk);
-    timer_wait(100);
     terminal_write(str);
-    timer_wait(10);
     for (;;);
 }
 
@@ -20,10 +17,5 @@ void kernel_main(uint32_t magic, uint32_t addr) {
 
     init_sleeplock(&lk, "lock");
 
-    timer_wait(100);
-    while (1) {
-        terminal_write("main ");
-        timer_wait(10);
-        releasesleep(&lk);
-    }
+    for (;;);
 }
