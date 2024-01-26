@@ -3,6 +3,7 @@
 //
 
 #include "include/thread.h"
+#include "include/gdt.h"
 
 list_t thread_ready_list;
 list_t thread_all_list;
@@ -51,8 +52,13 @@ void init_thread(thread_t *pthread, char *name, int prio) {
 }
 
 void create_thread(thread_t* pthread, thread_func func, void* args) {
-    pthread->thread_stack -= sizeof(thread_t);
-    pthread->thread_stack -= sizeof(struct thread_stack);
+    pthread->thread_stack =
+            (uint32_t *) ((uint32_t)pthread->thread_stack - sizeof(struct regs));
+    pthread->thread_stack =
+            (uint32_t *) ((uint32_t)pthread->thread_stack - 4);
+    // $4 for popl %eax in intr_exit()
+    pthread->thread_stack =
+            (uint32_t *) ((uint32_t)pthread->thread_stack - sizeof(struct thread_stack));
     struct thread_stack* kstack = (struct thread_stack*) pthread->thread_stack;
     kstack->eip = (uint32_t) kernel_thread;
     kstack->args_addr = (uint32_t) args;
@@ -106,8 +112,21 @@ void schedule() {
     thread_t *next_thread = (thread_t *) ((uint32_t) ele - offset);
     next_thread->status = TASK_RUNNING;
 
+    activate_process(next_thread);
     // switch_to() in intr.S
     switch_to(pthread, next_thread);
+}
+
+extern struct taskstate tss;
+
+void activate_process(thread_t *pthread) {
+    assert_write(pthread != NULL, "panic: activate_process");
+    uint32_t pa = (uint32_t) PDT_START;
+    if (pthread->pgdir != NULL) {            // user process
+        pa = addr_v2p((uint32_t)pthread->pgdir);
+        tss.esp0 = (uint32_t) ((uint32_t)pthread + PGSIZE);
+    }
+    lcr3((uint32_t)pa);
 }
 
 void acquiresleep(sleeplock_t *lk) {

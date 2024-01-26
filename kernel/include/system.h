@@ -20,6 +20,7 @@
 #include "timer.h"
 #include "thread.h"
 #include "kbd.h"
+#include "uproc.h"
 
 void mem_init(uint32_t addr) {
     multiboot_info_t* mbi = (multiboot_info_t*) addr;

@@ -35,6 +35,12 @@
 #define SEG_CODE_EXRDC     0x0E // Execute/Read, conforming
 #define SEG_CODE_EXRDCA    0x0F // Execute/Read, conforming, accessed
 
+#define GDT_SEL(rpl, ti, idx) ((idx << 3) | (ti << 2) | (rpl))
+#define KERNEL_CODE_SEL GDT_SEL(0, 0, 1)
+#define KERNEL_DATA_SEL GDT_SEL(0, 0, 2)
+#define USER_CODE_SEL   GDT_SEL(3, 0, 3)
+#define USER_DATA_SEL   GDT_SEL(3, 0, 4)
+
 #define GDT_CODE_PL0 SEG_DESCTYPE(1) | SEG_PRES(1) | SEG_SAVL(0) | \
                      SEG_LONG(0)     | SEG_SIZE(1) | SEG_GRAN(1) | \
                      SEG_PRIV(0)     | SEG_CODE_EXRD

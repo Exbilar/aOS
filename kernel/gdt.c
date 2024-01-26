@@ -56,6 +56,8 @@ void init_gdt(void) {
     desc = create_desc(0, 0xFFFFFFFF, (GDT_DATA_PL3));
     set_gdt_entry(4, desc);
 
+    tss.iomb = sizeof(tss);
+    tss.ss0 = KERNEL_DATA_SEL;
     desc = create_desc((uint32_t)&tss, (uint32_t)sizeof tss, (GDT_TSS_PL3));
     set_gdt_entry(5, desc);
 

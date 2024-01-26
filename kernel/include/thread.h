@@ -45,6 +45,7 @@ struct thread_state{
     ele_t blcok_tag;
     ele_t all_list_tag;
     uint32_t* pgdir;
+    struct vaddr user_vmem;
     char name[16];
     uint32_t stack_magic;
 };
@@ -62,5 +63,6 @@ void acquiresleep(sleeplock_t *lk);
 void releasesleep(sleeplock_t *lk);
 void sleep(sleeplock_t *lk, enum task_status status);
 void wakeup(sleeplock_t *lk);
+void activate_process(thread_t *pthread);
 
 #endif //AOS_THREAD_H

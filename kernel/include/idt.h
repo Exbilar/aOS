@@ -11,7 +11,7 @@
 #include "i386.h"
 #include "types.h"
 
-uint32_t set_selector(uint rpl, uint ti, uint index);
+uint16_t set_selector(uint rpl, uint ti, uint index);
 uint64_t create_idt_entry(uint32_t off, uint16_t sel, uint d);
 void set_idt_entry(uint64_t desc, uint index);
 void register_handler(void *handler, uint vec);

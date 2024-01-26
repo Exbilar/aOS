@@ -26,6 +26,7 @@ OBJ_FILES := boot.o \
 			 list.o \
 			 lock.o \
 			 kbd.o \
+			 uproc.o \
 
 OUTPUT := aOS.bin
 
@@ -90,6 +91,9 @@ lock.o: $(KERNEL_PATH)/lock.c
 
 kbd.o: $(KERNEL_PATH)/kbd.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/kbd.c -o kbd.o
+
+uproc.o:  $(KERNEL_PATH)/uproc.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/uproc.c -o uproc.o
 
 # 定义伪目标
 .PHONY: clean run

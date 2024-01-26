@@ -3,16 +3,11 @@
 //
 
 #include "include/vm.h"
-#include "include/kalloc.h"
 
-struct {
-    uint32_t mem_start;
-    struct spinlock lock;
-    struct run *freelist;
-}vmem;
+struct vaddr vmem;
 
 void vinit() {
-    vmem.mem_start = 0x300000;
+    vmem.mem_start = 0xc00000;
     vmem.freelist = NULL;
     init_lock(&vmem.lock, "vmem");
 }
@@ -77,7 +72,7 @@ void pagetable_init() {
 void mappage(uint32_t PDX, uint32_t PTX, uint32_t pa) {
     pagetable_t PDE = &PDT_START[PDX];
     if (*PDE == 0) {
-        *PDE = (uint32_t) kalloc() | PTE_P | PTE_U | PTE_W;
+        *PDE = (uint32_t) (PDT_END + PDX * PGSIZE) | PTE_P | PTE_U | PTE_W;
     }
     assert_write(*PDE != 0, "panic: mappage");
     pagetable_t PTT = (pagetable_t) (PTE_ADDR(*PDE));
@@ -94,4 +89,11 @@ void* malloc_page() {
 
 void mfree_page(void *va) {
     vfree(va);
+}
+
+uint32_t addr_v2p(uint32_t va) {
+    pagetable_t PDE = &PDT_START[PDX(va)];
+    pagetable_t PTT = (pagetable_t) (PTE_ADDR(*PDE));
+    pagetable_t PTE = &PTT[PTX(va)];
+    return PTE_ADDR(*PTE) + (va & 0xFFF);
 }

@@ -8,8 +8,8 @@
 
 struct gatedesc idt[NINTS];
 
-uint32_t set_selector(uint rpl, uint ti, uint index) {
-    return (uint32_t) ((index << 3) | (rpl << 1) | (ti));
+uint16_t set_selector(uint rpl, uint ti, uint index) {
+    return (uint16_t) ((index << 3) | (rpl) | (ti << 2));
 }
 
 uint64_t create_idt_entry(uint32_t off, uint16_t sel, uint d) {
@@ -25,7 +25,7 @@ void set_idt_entry(uint64_t desc, uint index) {
 }
 
 void register_handler(void *handler, uint vec) {
-    uint32_t sel = set_selector(0, 0, 1);
+    uint16_t sel = set_selector(0, 0, 1);
     uint64_t desc = create_idt_entry((uint32_t) handler, sel, 0);
     set_idt_entry(desc, vec);
 }
