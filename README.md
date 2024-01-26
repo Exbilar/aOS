@@ -18,7 +18,7 @@ make gdb           #debug
 
 ### ToDo List:
   - [x] kernel thread support
-  - [ ] user process support
+  - [x] user process support
   - [ ] syscall
   - [ ] file system
   - [ ] shell
