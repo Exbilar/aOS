@@ -139,3 +139,34 @@ switch_to:
     popl %edi
     popl %esi
     ret
+
+.section .text
+.global syscall_entry
+
+.extern syscall_handler
+
+syscall_entry:
+    cli
+    pushl $0
+    pushl $0x80
+
+    pusha
+    push %ds
+    push %es
+    push %fs
+    push %gs
+
+    // set segment registers to kernel data segment
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+
+    movl %esp, %eax
+    pushl %eax
+    sti
+    call syscall_handler
+    // store return value in %eax
+    movl %eax, 48(%esp)
+    jmp intr_exit

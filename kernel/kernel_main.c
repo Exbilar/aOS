@@ -2,15 +2,17 @@
 
 struct sleeplock lk;
 
+int cnt = 0;
+
 void k_thread_a(void *args) {
     while (1) {
-        terminal_write("a");
+        terminal_putchar('0' + cnt);
         timer_wait(100);
     }
 }
 
 void u_process(void *args) {
-    int cnt = 0;
+    asm volatile("int $0x80");
     while (1) {
         cnt += 1;
         timer_wait(100);

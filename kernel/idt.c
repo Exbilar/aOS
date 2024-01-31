@@ -30,6 +30,12 @@ void register_handler(void *handler, uint vec) {
     set_idt_entry(desc, vec);
 }
 
+void register_syscall_handler() {
+    uint16_t sel = set_selector(0, 0, 1);
+    uint64_t desc = create_idt_entry((uint32_t) syscall_entry, sel, 3);
+    set_idt_entry(desc, 0x80);
+}
+
 void load_idt() {
     lidt(idt, sizeof(idt));
 }
@@ -84,6 +90,8 @@ void init_idt() {
     register_handler(irq_45, 45);
     register_handler(irq_46, 46);
     register_handler(irq_47, 47);
+
+    register_syscall_handler();
 
     load_idt();
     terminal_writeln("idt init done");

@@ -60,6 +60,8 @@ extern void irq_45();
 extern void irq_46();
 extern void irq_47();
 
+extern int syscall_entry();
+
 struct regs {
     unsigned int gs, fs, es, ds;
     unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;

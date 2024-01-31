@@ -27,6 +27,7 @@ OBJ_FILES := boot.o \
 			 lock.o \
 			 kbd.o \
 			 uproc.o \
+			 syscall.o \
 
 OUTPUT := aOS.bin
 
@@ -94,6 +95,9 @@ kbd.o: $(KERNEL_PATH)/kbd.c
 
 uproc.o:  $(KERNEL_PATH)/uproc.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/uproc.c -o uproc.o
+
+syscall.o:  $(KERNEL_PATH)/syscall.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/syscall.c -o syscall.o
 
 # 定义伪目标
 .PHONY: clean run

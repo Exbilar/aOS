@@ -21,6 +21,7 @@
 #include "thread.h"
 #include "kbd.h"
 #include "uproc.h"
+#include "syscall.h"
 
 void mem_init(uint32_t addr) {
     multiboot_info_t* mbi = (multiboot_info_t*) addr;

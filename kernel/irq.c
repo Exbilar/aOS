@@ -43,7 +43,7 @@ const unsigned char *exception_messages[] = {
         "Reserved"
 };
 
-void* handler_entry_list[49] = {0};
+void* handler_entry_list[255] = {0};
 
 void irq_install(int irq, void (*handler) (struct regs *r)) {
     handler_entry_list[irq] = handler;

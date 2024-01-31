@@ -14,7 +14,7 @@
 #define FL_IF           0x00000200      // Interrupt Enable
 #define FL_IOPL_3       (3 << 12)
 #define FL_IOPL_0       (0 << 12)
-#define FL_MBS          (1 << 1)
+#define FL_MBS          (1 << 1)       // must be set
 
 // Control Register flags
 #define CR0_PE          0x00000001      // Protection Enable
