@@ -8,8 +8,6 @@
 #include "vga.h"
 #include "assert.h"
 
-void panic(char* ch);
-
 int printf(const char* format, ...);
 
 #endif //AOS_STDIO_H

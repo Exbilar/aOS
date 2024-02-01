@@ -5,7 +5,7 @@
 #include "include/timer.h"
 #include "include/vga.h"
 #include "include/thread.h"
-#include "include/stdio.h"
+#include "include/assert.h"
 #include "include/i386.h"
 
 int timer_ticks = 0;

@@ -4,6 +4,11 @@
 
 #include "include/assert.h"
 
+void panic(char* ch) {
+    terminal_writeln(ch);
+    assert(false);
+}
+
 void assert(bool expr) {
     if (expr == false) {
         asm volatile("cli");

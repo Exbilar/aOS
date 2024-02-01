@@ -7,9 +7,9 @@
 
 #include <stdint.h>
 #include "mmu.h"
-#include "stdio.h"
 #include "i386.h"
 #include "lock.h"
+#include "assert.h"
 
 #define NPAGES 1024 * 1024
 
