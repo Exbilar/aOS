@@ -41,6 +41,7 @@ void init_all(uint32_t addr) {
     enable_thread();
     timer_init();
     kbd_init();
+    syscall_init();
 }
 
 #endif //AOS_SYSTEM_H

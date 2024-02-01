@@ -10,7 +10,18 @@ list_t thread_all_list;
 list_t thread_block_list;
 thread_t *main_thread;
 
+struct spinlock pid_lock;
+
 extern void switch_to(thread_t *cur_thread, thread_t *next_thread);
+
+static pid_t pid_pool = 0;
+
+pid_t alloc_pid() {
+    acquire(&pid_lock);
+    pid_pool++;
+    release(&pid_lock);
+    return pid_pool;
+}
 
 static void make_main_thread() {
     main_thread = running_thread();
@@ -22,6 +33,7 @@ void enable_thread() {
     list_init(&thread_ready_list);
     list_init(&thread_all_list);
     list_init(&thread_block_list);
+    init_lock(&pid_lock, "pid_lock");
     make_main_thread();
 }
 
@@ -37,6 +49,7 @@ void init_thread(thread_t *pthread, char *name, int prio) {
     pthread->priority = prio;
     pthread->ticks = prio;
     pthread->elapsed_ticks = 0;
+    pthread->pid = alloc_pid();
     if (pthread == main_thread) {
         pthread->status = TASK_RUNNING;
         uint32_t esp;

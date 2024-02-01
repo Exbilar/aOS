@@ -35,8 +35,11 @@ struct thread_stack {
     uint32_t args_addr;
 };
 
+typedef int16_t pid_t;
+
 struct thread_state{
     uint32_t* thread_stack;
+    pid_t pid;
     enum task_status status;
     uint8_t priority;
     uint8_t ticks;
@@ -51,6 +54,7 @@ struct thread_state{
 };
 typedef struct thread_state thread_t;
 
+pid_t alloc_pid();
 thread_t* running_thread();
 void create_thread(thread_t* pthread, thread_func func, void* args);
 void init_thread(thread_t *pthread, char *name, int prio);

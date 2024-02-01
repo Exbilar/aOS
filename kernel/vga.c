@@ -38,7 +38,7 @@ void terminal_put_entry_at(unsigned char uc, uint8_t color, size_t x, size_t y) 
 
 void terminal_putchar(char c) {
     c = (unsigned char) c;
-      terminal_put_entry_at(c, terminal_color, terminal_column, terminal_row);
+    terminal_put_entry_at(c, terminal_color, terminal_column, terminal_row);
     if (++terminal_column == VGA_WIDTH) {
         terminal_column = 0;
         if (++terminal_row == VGA_HEIGHT) {
@@ -88,7 +88,6 @@ void terminal_writeln(const char* ch) {
 }
 
 void terminal_scroll(size_t line) {
-    uint16_t* ptr;
 
     if (line == 0) {
         for (size_t x = 0; x < VGA_WIDTH; x++) {

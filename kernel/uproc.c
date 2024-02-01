@@ -43,7 +43,7 @@ void start_process(void *filename_) {
     proc_stack->es = proc_stack->ds = proc_stack->fs = USER_DATA_SEL;
     proc_stack->eip = (uint32_t) filename_;
     proc_stack->cs = USER_CODE_SEL;
-    proc_stack->eflags = (FL_IOPL_3 | FL_IF | FL_MBS);
+    proc_stack->eflags = (FL_IOPL_0 | FL_IF | FL_MBS);
     proc_stack->useresp = pthread->user_vmem.mem_start;
     proc_stack->ss = USER_DATA_SEL;
     asm volatile("movl %0, %%esp; jmp intr_exit" : : "g" ((char *)proc_stack - 4) : "memory");

@@ -12,7 +12,7 @@ void k_thread_a(void *args) {
 }
 
 void u_process(void *args) {
-    asm volatile("int $0x80");
+    write("hello");
     while (1) {
         cnt += 1;
         timer_wait(100);
