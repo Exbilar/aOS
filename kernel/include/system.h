@@ -22,6 +22,7 @@
 #include "kbd.h"
 #include "uproc.h"
 #include "syscall.h"
+#include "ide.h"
 
 void mem_init(uint32_t addr) {
     multiboot_info_t* mbi = (multiboot_info_t*) addr;
@@ -42,6 +43,7 @@ void init_all(uint32_t addr) {
     timer_init();
     kbd_init();
     syscall_init();
+    ide_init();
 }
 
 #endif //AOS_SYSTEM_H

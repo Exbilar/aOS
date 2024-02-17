@@ -69,10 +69,23 @@ struct regs {
     unsigned int eip, cs, eflags, useresp, ss;
 };
 
+#define EFLAGS_IF 0x00000200
+#define GET_EFLAGS(EFLAG_VAR) asm volatile("pushfl; popl %0" : "=g" (EFLAG_VAR))
+
+enum intr_status {
+    INTR_OFF,
+    INTR_ON
+};
+
 void irq_remap();
 void init_intr();
 void irq_uninstall(int irq);
 void irq_install(int irq, void (*handler)(struct regs *r));
 void irq_handler(struct regs *r);
+
+enum intr_status intr_get_status();
+enum intr_status intr_set_status(enum intr_status status);
+enum intr_status push_off();
+enum intr_status pop_off();
 
 #endif //AOS_IRQ_H

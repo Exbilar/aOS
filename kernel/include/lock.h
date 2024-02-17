@@ -10,11 +10,14 @@
 #include "string.h"
 #include "list.h"
 
+// definition of spinlock
 struct spinlock {
     uint locked;
     char name[16];
 };
 
+// definition of sleeplock, which contains a spinklock for the mutex access of uint locked
+// member chain contains the blocked thread tags
 struct sleeplock {
     uint locked;
     struct spinlock lock;

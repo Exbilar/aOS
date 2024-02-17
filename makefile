@@ -28,6 +28,8 @@ OBJ_FILES := boot.o \
 			 kbd.o \
 			 uproc.o \
 			 syscall.o \
+			 ide.o \
+			 sleeplock.o \
 
 OUTPUT := aOS.bin
 
@@ -93,20 +95,29 @@ lock.o: $(KERNEL_PATH)/lock.c
 kbd.o: $(KERNEL_PATH)/kbd.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/kbd.c -o kbd.o
 
-uproc.o:  $(KERNEL_PATH)/uproc.c
+uproc.o: $(KERNEL_PATH)/uproc.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/uproc.c -o uproc.o
 
-syscall.o:  $(KERNEL_PATH)/syscall.c
+syscall.o: $(KERNEL_PATH)/syscall.c
 	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/syscall.c -o syscall.o
 
+ide.o: $(KERNEL_PATH)/ide.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/ide.c -o ide.o
+
+sleeplock.o: $(KERNEL_PATH)/sleeplock.c
+	$(CC) $(CFLAGS) -c $(KERNEL_PATH)/sleeplock.c -o sleeplock.o
+
 # 定义伪目标
-.PHONY: clean run
+.PHONY: clean run img
 
 clean:
 	rm -f $(OBJ_FILES) $(OUTPUT)
 
 run: all
-	qemu-system-i386 -m 128 -cdrom aOS.iso
+	qemu-system-i386 -m 128 -cdrom aOS.iso -drive file=hdisk.img,format=raw -boot d
 
 gdb: all
-	qemu-system-i386 -m 128 -s -S -cdrom aOS.iso
+	qemu-system-i386 -m 128 -s -S -cdrom aOS.iso -drive file=hdisk.img,format=raw -boot d
+
+img:
+	qemu-img create hdisk.img 128M

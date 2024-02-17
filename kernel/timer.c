@@ -20,7 +20,7 @@ void timer_phase(int hz) {
 
 void timer_init() {
     timer_ticks = 0;
-    timer_hz = 100;
+    timer_hz = 1000;
     timer_phase(timer_hz);
     timer_install();
 }
@@ -44,9 +44,9 @@ void timer_handler(struct regs *r) {
 
 void timer_wait(int ticks) {
     uint eflags = readeflags();
-    assert_write(eflags & 0x00000200, "panic timer_wait: IF not set");
+    //assert_write(eflags & 0x00000200, "panic timer_wait: IF not set");
     uint32_t end_ticks = ticks + timer_ticks;
-    while (timer_ticks < end_ticks);
+    while (timer_ticks < end_ticks) thread_yield();
 }
 
 void timer_install() {

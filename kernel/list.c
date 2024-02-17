@@ -45,7 +45,7 @@ void insert_before(ele_t *pos, ele_t *ele) {
     check_ele(before);
 }
 
-void remove(ele_t *ele) {
+void list_remove(ele_t *ele) {
     ele_t *before = ele->prev;
     ele_t *after = ele->next;
     before->next = after;

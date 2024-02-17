@@ -6,10 +6,8 @@
 #define AOS_THREAD_H
 
 #include "mmu.h"
-#include "irq.h"
 #include "vm.h"
 #include "i386.h"
-#include "string.h"
 #include "list.h"
 #include "lock.h"
 
@@ -24,6 +22,8 @@ enum task_status {
     TASK_DIED
 };
 
+// struct thread_stack records the data structure of registers for scheduling
+// func_addr and args_addr are used for function kernel_thread(thread_func* func, void *args)
 struct thread_stack {
     uint32_t ebp;
     uint32_t ebx;
@@ -60,13 +60,15 @@ void create_thread(thread_t* pthread, thread_func func, void* args);
 void init_thread(thread_t *pthread, char *name, int prio);
 void kernel_thread(thread_func* func, void *args);
 thread_t* start_thread(char *name, int prio, thread_func func, void *args);
+
 void schedule();
 void enable_thread();
 
-void acquiresleep(sleeplock_t *lk);
-void releasesleep(sleeplock_t *lk);
-void sleep(sleeplock_t *lk, enum task_status status);
-void wakeup(sleeplock_t *lk);
+void thread_yield();
+
 void activate_process(thread_t *pthread);
+
+void task_block(enum task_status status);
+void task_wakeup(thread_t *pthread);
 
 #endif //AOS_THREAD_H

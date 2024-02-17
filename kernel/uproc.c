@@ -4,6 +4,7 @@
 
 #include "include/uproc.h"
 #include "include/thread.h"
+#include "include/irq.h"
 
 void init_vaddr(struct vaddr *vmem) {
     vmem->mem_start = 0x40000000;   // user space start from 1GB

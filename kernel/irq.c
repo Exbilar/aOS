@@ -6,7 +6,7 @@
 #include "include/idt.h"
 #include "include/i386.h"
 #include "include/vga.h"
-#include "include/timer.h"
+#include "include/assert.h"
 
 const unsigned char *exception_messages[] = {
         "Division By Zero",
@@ -54,6 +54,7 @@ void irq_uninstall(int irq) {
 }
 
 void irq_remap() {
+    // setting initial options
     outb(PIC_M_CTRL, 0x11);
     outb(PIC_M_DATA, 0x20);
     outb(PIC_M_DATA, 0x04);
@@ -64,9 +65,9 @@ void irq_remap() {
     outb(PIC_S_DATA, 0x02);
     outb(PIC_S_DATA, 0x01);
 
-    // open timer interrupt only
-    outb(PIC_M_DATA, 0xfc);
-    outb(PIC_S_DATA, 0xff);
+    // opening timer interrupt, keyboard interrupt, channel interrupt
+    outb(PIC_M_DATA, 0xf8);
+    outb(PIC_S_DATA, 0xbf);
 }
 
 void init_intr() {
@@ -98,4 +99,43 @@ void irq_handler(struct regs *r) {
         for (;;);
     }
 
+}
+
+enum intr_status intr_get_status() {
+    uint32_t eflags = 0;
+    GET_EFLAGS(eflags);
+    return (EFLAGS_IF & eflags) ? INTR_ON : INTR_OFF;
+}
+
+static int intr_cnt = 0;
+
+enum intr_status pop_off() {
+    enum intr_status old_status;
+    if (intr_cnt < 1) {
+        panic("panic pop_off");
+    }
+    intr_cnt -= 1;
+    if (INTR_ON == intr_get_status()) {
+        old_status = INTR_ON;
+    } else {
+        old_status = INTR_OFF;
+        if (intr_cnt == 0) sti();
+    }
+    return old_status;
+}
+
+enum intr_status push_off() {
+    enum intr_status old_status;
+    intr_cnt += 1;
+    if (INTR_ON == intr_get_status()) {
+        old_status = INTR_ON;
+        cli();
+    } else {
+        old_status = INTR_OFF;
+    }
+    return old_status;
+}
+
+enum intr_status intr_set_status(enum intr_status status) {
+    return status & INTR_ON ? pop_off() : push_off();
 }

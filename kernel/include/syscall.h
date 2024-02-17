@@ -48,6 +48,7 @@ int syscall_handler(struct regs *r);
 
 int getpid();
 int write(char *str);
+int sleep(int ticks);
 
 void syscall_init();
 

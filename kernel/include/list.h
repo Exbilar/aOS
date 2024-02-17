@@ -25,7 +25,7 @@ void check_ele(ele_t *ele);
 bool is_empty(list_t *list);
 void insert_after(ele_t *pos, ele_t *ele);
 void insert_before(ele_t *pos, ele_t *ele);
-void remove(ele_t *ele);
+void list_remove(ele_t *ele);
 void list_insert_front(list_t *list, ele_t *ele);
 void list_insert_rear(list_t *list, ele_t *ele);
 bool find_ele(list_t *list, ele_t *ele);
