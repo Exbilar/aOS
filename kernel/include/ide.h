@@ -10,13 +10,18 @@
 #include "lock.h"
 #include "sleeplock.h"
 #include "irq.h"
+#include "bitmap.h"
+#include "super_block.h"
 
 struct partition {
     char name[16];
     uint32_t start_lba;
     uint32_t sec_cnt;
     struct disk *dsk;
-    // TODO: reserved here...
+    struct super_block *sb;
+    bitmap_t block_bitmap;
+    bitmap_t inode_bitmap;
+    list_t   open_inodes;
 };
 
 // hdisk.img has only one partition,

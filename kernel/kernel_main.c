@@ -33,19 +33,18 @@ void k_thread_b(void *args) {
 }
 
 void u_process(void *args) {
-    while (1) {
-
-    }
+    int x = 10;
+    int y = 0x3f;
+    char str[10] = "asldk";
+    printf("hello: %d %x: g %s", x, y, str);
+    while (1);
 }
 
 void kernel_main(uint32_t magic, uint32_t addr) {
     init_all(addr);
 
-    for (int i = 0; i < 512; i++) {
-        buf[i] = 'a';
-    }
-
-    ide_write(hd, 34, buf, 1);
+    create_process("a", u_process, 10);
+    create_process("a", u_process, 10);
 
     for (;;);
 }

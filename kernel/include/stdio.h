@@ -5,9 +5,12 @@
 #ifndef AOS_STDIO_H
 #define AOS_STDIO_H
 
-#include "vga.h"
-#include "assert.h"
+#include "types.h"
 
-int printf(const char* format, ...);
+#include <stdarg.h>
+
+uint32_t vsprintf(const char *fmt, char *buf, va_list ap);
+uint32_t printf(const char* format, ...);
+uint32_t printk(const char* format, ...);
 
 #endif //AOS_STDIO_H
