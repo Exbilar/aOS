@@ -12,6 +12,7 @@
 #include "assert.h"
 
 #define NPAGES 1024 * 1024
+#define PHYSIZE 128 * 1024 * 1024       // physical memory size
 
 struct run {
     struct run *next;

@@ -33,10 +33,10 @@ void k_thread_b(void *args) {
 }
 
 void u_process(void *args) {
-    int x = 10;
+    int z = *(int*)(0x40000000);
     int y = 0x3f;
     char str[10] = "asldk";
-    printf("hello: %d %x: g %s", x, y, str);
+    printf("hello: %d %x: g %s", z, y, str);
     while (1);
 }
 

@@ -19,6 +19,7 @@ struct partition {
     uint32_t sec_cnt;
     struct disk *dsk;
     struct super_block *sb;
+    struct list_ele part_tag;
     bitmap_t block_bitmap;
     bitmap_t inode_bitmap;
     list_t   open_inodes;

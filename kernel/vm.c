@@ -6,49 +6,15 @@
 
 struct vaddr vmem;
 
-void vinit() {
-    vmem.mem_start = 0xc00000;
-    vmem.freelist = NULL;
-    init_lock(&vmem.lock, "vmem");
-}
-
-void* valloc() {
-    acquire(&vmem.lock);
-    if (vmem.freelist  != NULL) {
-        struct run *r = vmem.freelist;
-        vmem.freelist = r->next;
-        sti();
-        return (void *)r;
-    }
-    uint32_t res = vmem.mem_start;
-    vmem.mem_start += PGSIZE;
-    release(&vmem.lock);
-    return (void *)res;
-}
-
-void vfree(char *va) {
-    va = (char *) PGROUNDDOWN((uint32_t)va);
-    assert_write((uint32_t) va < vmem.mem_start, "panic: vfree");
-    acquire(&vmem.lock);
-    struct run *r = (struct run *)va;
-    r->next = vmem.freelist;
-    vmem.freelist = r;
-    release(&vmem.lock);
-}
-
-void free_page(char *pa) {
-    memset(pa, 0, PGSIZE);
-}
-
-void free_PDT() {
+static void free_PDT() {
     memset((char *)PDT_START, 0, PGSIZE);
 }
 
-void load_pagetable() {
+static void load_pagetable() {
     lcr3((uint32_t)PDT_START);
 }
 
-void page_enable() {
+static void page_enable() {
     uint32_t val = rcr0();
     val |= CR0_PG;
     lcr0(val);
@@ -56,44 +22,36 @@ void page_enable() {
 
 void map_kernel_pages(uint32_t start, uint32_t end) {
     for (uint32_t va = start; va + PGSIZE <= end; va += PGSIZE) {
-        mappage(PDX(va), PTX(va), PGADDR(PDX(va), PTX(va), 0));
+        kernel_mappage(PDX(va), PTX(va), PGADDR(PDX(va), PTX(va), 0));
     }
 }
 
 void pagetable_init() {
-    vinit();
     free_PDT();
-    // identity map from 0 ~ 128MiB physical memory to itself
-    map_kernel_pages(0, 0x8000000);
+    map_kernel_pages(0, PHYSIZE);     // identity map 0 ~ 128MiB physical memory to itself
     load_pagetable();
     page_enable();
 }
 
-void mappage(uint32_t PDX, uint32_t PTX, uint32_t pa) {
+void kernel_mappage(uint32_t PDX, uint32_t PTX, uint32_t pa) {
     pagetable_t PDE = &PDT_START[PDX];
     if (*PDE == 0) {
         *PDE = (uint32_t) (PDT_END + PDX * PGSIZE) | PTE_P | PTE_U | PTE_W;
     }
-    assert_write(*PDE != 0, "panic: mappage");
+    assert_write(*PDE != 0, "panic: kernel_mappage");
     pagetable_t PTT = (pagetable_t) (PTE_ADDR(*PDE));
     pagetable_t PTE = &PTT[PTX];
     *PTE = pa | PTE_P | PTE_U | PTE_W;
 }
 
-void* malloc_page() {
-    void *va = valloc();
-    void *pa = kalloc();
-    mappage(PDX(va), PTX(va), (uint32_t )pa);
-    return va;
-}
-
-void mfree_page(void *va) {
-    vfree(va);
-}
-
-uint32_t addr_v2p(uint32_t va) {
-    pagetable_t PDE = &PDT_START[PDX(va)];
+void mappage(pagetable_t pgdir, uint32_t va, uint32_t pa) {
+    pagetable_t PDE = &pgdir[PDX(va)];
+    if (*PDE == 0) {
+        uint32_t alloc = (uint32_t) kalloc();
+        *PDE = alloc | PTE_P | PTE_U | PTE_W;
+    }
+    assert_write(*PDE != 0, "panic mappage");
     pagetable_t PTT = (pagetable_t) (PTE_ADDR(*PDE));
     pagetable_t PTE = &PTT[PTX(va)];
-    return PTE_ADDR(*PTE) + (va & 0xFFF);
+    *PTE = pa | PTE_P | PTE_U | PTE_W;
 }

@@ -19,6 +19,12 @@ make gdb           #debug
 ### ToDo List:
   - [x] kernel thread support
   - [x] user process support
-  - [ ] syscall
+  - [x] syscall
+  - [x] disk driver
   - [ ] file system
   - [ ] shell
+
+### Reference:
+* [OSDev](https://wiki.osdev.org/)
+* [xv6](https://github.com/mit-pdos/xv6-riscv)
+* 《操作系统真相还原》(郑纲)

@@ -29,6 +29,8 @@ OBJ_FILES := boot.o \
 			 syscall.o \
 			 ide.o \
 			 sleeplock.o \
+			 bitmap.o \
+			 fs.o \
 
 OUTPUT := aOS.bin
 

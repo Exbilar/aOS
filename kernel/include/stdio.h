@@ -10,7 +10,8 @@
 #include <stdarg.h>
 
 uint32_t vsprintf(const char *fmt, char *buf, va_list ap);
-uint32_t printf(const char* format, ...);
-uint32_t printk(const char* format, ...);
+uint32_t printf(const char* fmt, ...);
+uint32_t printk(const char* fmt, ...);
+void sprintf(char *buf, const char *fmt, ...);
 
 #endif //AOS_STDIO_H

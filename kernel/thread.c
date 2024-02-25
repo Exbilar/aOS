@@ -89,7 +89,7 @@ void create_thread(thread_t* pthread, thread_func func, void* args) {
 }
 
 thread_t* start_thread(char *name, int prio, thread_func func, void *args) {
-    thread_t* thread = (thread_t*) malloc_page();
+    thread_t* thread = (thread_t*) kalloc();
     init_thread(thread, name, prio);
     create_thread(thread, func, args);
 
@@ -184,7 +184,7 @@ void activate_process(thread_t *pthread) {
     assert_write(pthread != NULL, "panic: activate_process");
     uint32_t pa = (uint32_t) PDT_START;
     if (pthread->pgdir != NULL) {            // user process
-        pa = addr_v2p((uint32_t)pthread->pgdir);
+        pa = (uint32_t) pthread->pgdir;
         tss.esp0 = (uint32_t) ((uint32_t)pthread + PGSIZE);
     }
     lcr3((uint32_t)pa);

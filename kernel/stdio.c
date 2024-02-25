@@ -61,6 +61,13 @@ uint32_t vsprintf(const char *fmt, char *buf, va_list ap) {
     return strlen(buf);
 }
 
+void sprintf(char *buf, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vsprintf(fmt, buf, args);
+    va_end(args);
+}
+
 // used for kernel
 uint32_t printk(const char *fmt, ...) {
     char buf[512];

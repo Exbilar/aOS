@@ -27,8 +27,8 @@
 void mem_init(uint32_t addr) {
     multiboot_info_t* mbi = (multiboot_info_t*) addr;
 
-    // kalloc start from here, 0 ~ 2MiB memory area is used for kernel
-    uint32_t pa_start = 0x300000;
+    // kalloc start from here, 0 ~ 4MiB memory area is used for kernel, 4MiB ~ 12MiB area is used for page table
+    uint32_t pa_start = 0xc00000;
     uint32_t pa_end = 0x100000 + mbi->mem_upper * 1024;
     kinit((void *)pa_start, (void *)pa_end);
     pagetable_init();

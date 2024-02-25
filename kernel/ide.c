@@ -6,6 +6,7 @@
 #include "include/timer.h"
 #include "include/sleeplock.h"
 #include "include/irq.h"
+#include "include/kalloc.h"
 
 #define reg_data(channel)           (channel->port_base + 0)
 #define reg_err(channel)            (channel->port_base + 1)
@@ -32,8 +33,35 @@
 
 #define MAX_LBA                     ((128 * 1024 * 1024 / 512) - 1)
 
+struct partition_table_entry {
+    uint8_t bootable;
+    uint8_t start_head;
+    uint8_t boot_sector;
+    uint8_t start_CHS;
+    uint8_t fs_type;
+    uint8_t end_head;
+    uint8_t end_sector;
+    uint8_t end_CHS;
+
+    uint32_t start_lba;
+    uint32_t sector_cnt;
+} __attribute__((packed));
+
+struct boot_sector {
+    uint8_t other[446];
+    struct partition_table_entry partition_table[4];
+    uint16_t signature;
+} __attribute__((packed));
+
 uint8_t channel_cnt;
 struct ide_channel channels[2];
+
+int32_t ext_lba_base = 0;
+uint8_t p_no = 0, l_no = 0;
+
+struct list partition_list;
+
+static void partition_scan(struct disk *dsk, uint32_t ext_lba);
 
 void ide_init() {
     uint8_t hd_cnt = *((uint8_t*)(0x475));
@@ -42,6 +70,7 @@ void ide_init() {
     channel_cnt = (hd_cnt + 1) / 2;
     assert(channel_cnt < 2);
 
+    list_init(&partition_list);
     for (int channel_no = 0; channel_no < channel_cnt; channel_no++) {
         struct ide_channel *channel = &channels[channel_no];
         switch (channel_no) {
@@ -66,6 +95,10 @@ void ide_init() {
             strcpy("disk", hd->name, strlen("disk"));
             hd->channel = channel;
             hd->dev_no = dev_no;
+            if (dev_no == 0) {          // only one hard disk
+                partition_scan(hd, 0);
+            }
+            p_no = 0, l_no = 0;
             dev_no++;
         }
     }
@@ -202,4 +235,44 @@ void intr_disk_handler(struct regs *r) {
         semaphore_V(&channel->sem);
         inb(reg_status(channel));
     }
+}
+
+static void partition_scan(struct disk *dsk, uint32_t ext_lba) {
+    struct boot_sector *bs = kalloc();
+    ide_read(dsk, ext_lba, bs, 1);
+
+    uint8_t part_idx = 0;
+    struct partition_table_entry *p = bs->partition_table;
+
+    while (part_idx++ < 4) {
+        if (p->fs_type == 0x5) {
+            if (ext_lba_base != 0) {
+                partition_scan(dsk, p->start_lba + ext_lba_base);
+            }
+            else {
+                ext_lba_base = p->start_lba;
+                partition_scan(dsk, p->start_lba);
+            }
+        }
+        else if (p->fs_type != 0) {
+            if (ext_lba == 0) {
+                dsk->prim_parts[p_no].start_lba = ext_lba + p->start_lba;
+                dsk->prim_parts[p_no].sec_cnt = p->sector_cnt;
+                dsk->prim_parts[p_no].dsk = dsk;
+                list_insert_rear(&partition_list, &dsk->prim_parts[p_no].part_tag);
+                p_no++;
+            }
+            else {
+                dsk->logic_parts[l_no].start_lba = ext_lba + p->start_lba;
+                dsk->logic_parts[l_no].sec_cnt = p->sector_cnt;
+                dsk->logic_parts[l_no].dsk = dsk;
+                list_insert_rear(&partition_list, &dsk->logic_parts[l_no].part_tag);
+                l_no++;
+                if (l_no >= 8) return ;
+            }
+        }
+        p++;
+    }
+
+    kfree((char*) bs);
 }
