@@ -16,7 +16,7 @@ make clean         #clean all .o files
 make gdb           #debug
 ```
 
-NOTICE: hdisk.img is not formatted, so maybe partition_scan() and ide_init() (in ide.c) may occur error. 
+NOTICE: hdisk.img is not formatted, so partition_scan() and ide_init() (in kernel/ide.c) may occur error. 
 To handle this problem, you can use fdisk to create a partition for hdisk.img
 
 ![qemu.gif](docs%2Fqemu.gif)
